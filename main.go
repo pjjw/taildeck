@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	out           = flag.String("out-dir", ".", "where to save squashfs images to")
-	tsTarballPath = flag.String("tailscale-tarball", "./var/tailscale_1.24.2_amd64.tgz", "path to tailscale tarball on disk")
+	out           = flag.String("out", ".", "where to save squashfs images to")
+	tsTarballPath = flag.String("tarball", "./var/tailscale_1.24.2_amd64.tgz", "path to tailscale tarball on disk")
 	distro        = flag.String("distro", "arch", "distro to stamp into system extension")
 )
 
@@ -105,7 +105,7 @@ func main() {
 	}
 
 	sp := strings.Split(filepath.Base(*tsTarballPath), "_")
-	cmd := exec.Command(binPath, tmpDir, fmt.Sprintf("tailscale_sysext_%s.raw", sp[1]), "-quiet", "-noappend", "-all-root", "-root-mode", "755", "-b", "1M", "-comp", "xz", "-Xdict-size", "100%")
+	cmd := exec.Command(binPath, tmpDir, fmt.Sprintf("%s/tailscale_sysext_%s.raw", *out, sp[1]), "-quiet", "-noappend", "-all-root", "-root-mode", "755", "-b", "1M", "-comp", "xz", "-Xdict-size", "100%")
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	if err := cmd.Run(); err != nil {
