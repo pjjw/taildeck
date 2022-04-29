@@ -3,6 +3,7 @@ package main
 import (
 	"archive/tar"
 	"compress/gzip"
+	_ "embed"
 	"flag"
 	"fmt"
 	"io"
@@ -17,7 +18,10 @@ import (
 var (
 	out           = flag.String("out", ".", "where to save squashfs images to")
 	tsTarballPath = flag.String("tarball", "./var/tailscale_1.24.2_amd64.tgz", "path to tailscale tarball on disk")
-	distro        = flag.String("distro", "arch", "distro to stamp into system extension")
+	distro        = flag.String("distro", "steamos", "distro to stamp into system extension")
+
+	//go:embed tailscaled.service
+	systemdService []byte
 )
 
 func main() {
@@ -64,8 +68,6 @@ func main() {
 			fname = filepath.Join(tmpDir, "usr", "bin", "tailscale")
 		case "tailscaled":
 			fname = filepath.Join(tmpDir, "usr", "sbin", "tailscaled")
-		case "tailscaled.service":
-			fname = filepath.Join(tmpDir, "usr", "lib", "systemd", "system", "tailscaled.service")
 		default:
 			continue
 		}
@@ -80,6 +82,8 @@ func main() {
 			log.Fatal(err)
 		}
 
+		fout.Chmod(0755)
+
 		err = fout.Close()
 		if err != nil {
 			log.Fatal(err)
@@ -93,6 +97,21 @@ func main() {
 
 	fmt.Fprintln(fout, "SYSEXT_LEVEL=1.0")
 	fmt.Fprintf(fout, "ID=%s", *distro)
+
+	err = fout.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fout, err = os.Create(filepath.Join(tmpDir, "usr", "lib", "systemd", "system", "tailscaled.service"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = fout.Write(systemdService)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	err = fout.Close()
 	if err != nil {
