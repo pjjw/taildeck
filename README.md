@@ -21,8 +21,8 @@ If you have a steam deck, try this and see if it works:
 ```
 mkdir -p ~/.local/share/tailscale/steamos
 sudo mkdir -p /etc/extensions
-curl -o ~/.local/share/tailscale/steamos/tailscale_sysext_1.24.2.raw https://xena.greedo.xeserv.us/pkg/ts-sysext/tailscale_sysext_1.24.2.raw
-sudo ln -s ~/.local/share/tailscale/steamos/tailscale_sysext_1.24.2.raw /etc/extensions/tailscale.raw
+curl -o ~/.local/share/tailscale/steamos/tailscale.raw https://xena.greedo.xeserv.us/pkg/ts-sysext/tailscale_sysext_1.24.2.raw
+sudo ln -s ~/.local/share/tailscale/steamos/tailscale.raw /etc/extensions/tailscale.raw
 sudo systemd-sysext merge
 sudo systemctl enable --now tailscaled.service
 sudo tailscale up --qr
