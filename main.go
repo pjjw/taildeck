@@ -96,6 +96,7 @@ func main() {
 	}
 
 	fmt.Fprintln(fout, "SYSEXT_LEVEL=1.0")
+	fmt.Fprintln(fout, "VERSION_ID=3.2")
 	fmt.Fprintf(fout, "ID=%s", *distro)
 
 	err = fout.Close()
